@@ -10,10 +10,9 @@
 		<relativePath /> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.klbstore</groupId>
-	<artifactId>KLBStore</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<artifactId>ROOT</artifactId>
 	<packaging>war</packaging>
-	<name>KLBStore</name>
+	<name>ROOT</name>
 	<description>KLBStore</description>
 	<properties>
 		<java.version>17</java.version>
@@ -94,6 +93,7 @@
 	</dependencies>
 
 	<build>
+		<finalName>${artifactId}</finalName>
 		<plugins>
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
