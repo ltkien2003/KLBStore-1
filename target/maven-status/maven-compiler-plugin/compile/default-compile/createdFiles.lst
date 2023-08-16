@@ -6,7 +6,6 @@ com\klbstore\model\GiamGiaSanPham.class
 com\klbstore\model\ChiTietGioHang.class
 com\klbstore\delivery\Province.class
 com\klbstore\dao\DanhGiaDAO.class
-com\klbstore\controller\LoginRestController.class
 com\klbstore\dao\SanPhamDAO.class
 com\klbstore\dto\ChiTietGioHangDTO.class
 com\klbstore\model\CustomUserDetails.class

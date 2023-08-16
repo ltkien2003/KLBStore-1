@@ -1,64 +1,353 @@
 <!DOCTYPE html>
-<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{/user/user}">
-    <head>
-        <title>KLB Store</title>
-    </head>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>KLB Store</title>
 
-    <body>
-        <div layout:fragment="content">
-            <div class="breadcrumb-area">
-                <div class="container">
-                    <div class="breadcrumb-content">
-                        <ul>
-                            <li><a href="/user/index">Trang chủ</a></li>
-                            <li class="active">Mở khóa tài khoản</li>
-                        </ul>
+    <link rel="shortcut icon" type="image/x-icon" href="/assets/user/images/menu/logo/logo.svg" />
+
+    <link rel="stylesheet" href="/assets/user/css/material-design-iconic-font.min.css" />
+
+    <link rel="stylesheet" href="/assets/user/css/font-awesome.min.css" />
+
+    <link rel="stylesheet" href="/assets/user/css/fontawesome-stars.css" />
+
+    <link rel="stylesheet" href="/assets/user/css/meanmenu.css" />
+
+    <link rel="stylesheet" href="/assets/user/css/owl.carousel.min.css" />
+
+    <link rel="stylesheet" href="/assets/user/css/slick.css" />
+
+    <link rel="stylesheet" href="/assets/user/css/animate.css" />
+
+    <link rel="stylesheet" href="/assets/user/css/jquery-ui.min.css" />
+
+    <link rel="stylesheet" href="/assets/user/css/venobox.css" />
+
+    <link rel="stylesheet" href="/assets/user/css/nice-select.css" />
+
+    <link rel="stylesheet" href="/assets/user/css/magnific-popup.css" />
+
+    <link rel="stylesheet" href="/assets/user/css/bootstrap.min.css" />
+
+    <link rel="stylesheet" href="/assets/user/css/helper.css" />
+
+    <link rel="stylesheet" href="/assets/user/css/style.css" />
+
+    <link rel="stylesheet" href="/assets/user/css/responsive.css" />
+    <link rel="stylesheet" href="/assets/user/icon/fontawesome-free-6.2.1-web/fontawesome-free-6.2.1-web/css/all.min.css" />
+    <link rel="stylesheet" href="/assets/user/css/toast.css" />
+</head>
+<body ng-app="myApp" ng-controller="myCtrl">
+<div class="body-wrapper">
+    <div class="loading-overlay" ng-show="isLoading">
+        <div class="loading-spinner"></div>
+    </div>
+    <ul class="notifications"></ul>
+    <header>
+        <div class="header-top">
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-3 col-md-4">
+                        <div class="header-top-left">
+                            <ul class="phone-wrap">
+                                <li><span>Số điện thoại: </span><a href="#">0292 7300 468</a></li>
+                            </ul>
+                        </div>
                     </div>
-                </div>
-            </div>
-
-            <div class="page-section mb-60">
-                <div class="container">
-                    <div class="row justify-content-md-center">
-                        <div class="col-md-6">
-                            <form th:action="@{/user/unlock-account}" th:object="${unlockFrom}" method="post">
-                                <div class="login-form">
-                                    <h4 class="login-title">Đổi mật khẩu</h4>
-                                    <div class="row">
-                                        <div class="col-md-12 mb-20">
-                                            <label>Mật khẩu mới</label>
-                                            <input class="mb-0" type="password" th:field="*{newPass}" placeholder="Nhập mật khẩu mới" />
-                                            <span class="text-danger error" th:if="${#fields.hasErrors('newPass')}" th:errors="*{newPass}"></span>
-                                        </div>
-                                        <div class="col-md-12 mb-20">
-                                            <label>Xác nhận mật khẩu mới</label>
-                                            <input class="mb-0" type="password" th:field="*{subPass}" placeholder="Nhập mật khẩu xác nhận" />
-                                            <span class="text-danger error" th:if="${#fields.hasErrors('subPass')}" th:errors="*{subPass}"></span>
-                                        </div>
-                                        <div class="col-md-12 mb-20">
-                                            <label>Mã xác nhận</label>
-                                            <input class="mb-0" type="text" th:field="*{subCode}" placeholder="Nhập mật khẩu xác nhận" />
-                                            <span class="text-danger error" th:if="${#fields.hasErrors('subCode')}" th:errors="*{subCode}"></span>
-                                        </div>
-                                        <div class="col-12">
-                                            <div th:if="${message}" class="alert alert-warning alert-dismissible fade show" role="alert">
-                                                <span th:text="${message}"></span><a href="/user/login" th:text="${error}"></a>
-                                                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                                                    <span aria-hidden="true">&times;</span>
-                                                </button>
-                                            </div>
-                                        </div>
-                                        <div class="col-6">
-                                            <button class="btn btn-primary" type="submit">Đổi mật khẩu</button>
-                                            <span th:txt="${message}"></span>
-                                        </div>
+                    <div class="col-lg-9 col-md-8">
+                        <div class="header-top-right">
+                            <ul class="ht-menu">
+                                <li>
+                                    <div class="ht-setting-trigger"><span>Cài đặt</span></div>
+                                    <div class="setting ht-setting">
+                                        <ul class="ht-setting-list">
+                                            <li th:if="${userLogin}"><a href="/user/profile">Tài khoản</a></li>
+                                            <li th:if="${userLogin}"><a href="/user/profile/change-password">Đổi mật khẩu</a></li>
+                                            <li th:if="${userLogin}"><a href="/user/orders-list">Đơn mua</a></li>
+                                            <li th:if="!${userLogin}"><a href="/user/login">Đăng nhập</a></li>
+                                            <li th:if="!${userLogin}"><a href="/user/register">Đăng ký</a></li>
+                                            <li th:if="${userLogin}"><a href="/user/log-out">Đăng xuất</a></li>
+                                        </ul>
                                     </div>
-                                </div>
-                            </form>
+                                </li>
+                            </ul>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-    </body>
+
+        <div class="header-middle pl-sm-0 pr-sm-0 pl-xs-0 pr-xs-0">
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-3">
+                        <div class="logo pb-sm-30 pb-xs-30">
+                            <a href="/user/index">
+                                <img src="/assets/user/images/menu/logo/logo.svg" alt="" />
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-9 pl-0 ml-sm-15 ml-xs-15">
+                        <form action="/user/search" class="hm-searchbox" method="GET">
+                            <select class="nice-select select-search-category">
+                                <option value="0">Tất cả</option>
+                            </select>
+                            <input name="keywords" type="text" placeholder="Bạn tìm gì ..." />
+                            <button class="li-btn" type="submit"><i class="fa fa-search"></i></button>
+                        </form>
+
+                        <div class="header-middle-right">
+                            <ul class="hm-menu">
+                                <li class="hm-minicart" th:if="${(tongSoSanPham != null AND tongTien != null) == true}">
+                                    <div class="hm-minicart-trigger" onclick="location.href='/user/shopping-cart';">
+                                        <span class="item-icon"></span>
+                                        <span class="item-text">
+                                        <span class="tongTien" th:text="${#numbers.formatDecimal(tongTien, 0, 'COMMA', 0, 'POINT')} + ' ₫'"></span>
+                                        <span id="tongSoSanPham" class="cart-item-count" th:text="${#numbers.formatDecimal(tongSoSanPham, 0, 'COMMA', 0, 'POINT')}"></span>
+                                    </span>
+                                    </div>
+                                    <span></span>
+                                </li>
+                                <li class="hm-minicart" th:if="${(tongSoSanPham != null AND tongTien != null) == false}">
+                                    <div class="hm-minicart-trigger" onclick="location.href='/user/shopping-cart';">
+                                        <span class="item-icon"></span>
+                                        <span class="item-text">
+                                        <span class="tongTien">0 ₫</span>
+                                        <span id="tongSoSanPham" class="cart-item-count">0</span>
+                                    </span>
+                                    </div>
+                                    <span></span>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="header-bottom header-sticky d-none d-lg-block d-xl-block">
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="hb-menu">
+                            <nav>
+                                <ul>
+                                    <li><a href="/user/index">Trang chủ</a></li>
+                                    <li th:each="nhomSanPham : ${nhomSanPhamList}">
+                                        <a th:href="@{'/user/shop-list?nhomSanPhamId=' + ${nhomSanPham.nhomSanPhamId}}" th:text="${nhomSanPham.tenNhomSanPham}"></a>
+                                    </li>
+                                    <li><a href="/user/contact">Liên hệ</a></li>
+                                </ul>
+                            </nav>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="mobile-menu-area d-lg-none d-xl-none col-12">
+            <div class="container">
+                <div class="row">
+                    <div class="mobile-menu"></div>
+                </div>
+            </div>
+        </div>
+    </header>
+    <div class="breadcrumb-area">
+        <div class="container">
+            <div class="breadcrumb-content">
+                <ul>
+                    <li><a href="/user/index">Trang chủ</a></li>
+                    <li class="active">Mở khóa tài khoản</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="page-section mb-60">
+        <div class="container">
+            <div class="row justify-content-md-center">
+                <div class="col-md-6">
+                    <form th:action="@{/user/unlock-account}" th:object="${unlockFrom}" method="post">
+                        <div class="login-form">
+                            <h4 class="login-title">Đổi mật khẩu</h4>
+                            <div class="row">
+                                <div class="col-md-12 mb-20">
+                                    <label>Mật khẩu mới</label>
+                                    <input class="mb-0" type="password" th:field="*{newPass}" placeholder="Nhập mật khẩu mới" />
+                                    <span class="text-danger error" th:if="${#fields.hasErrors('newPass')}" th:errors="*{newPass}"></span>
+                                </div>
+                                <div class="col-md-12 mb-20">
+                                    <label>Xác nhận mật khẩu mới</label>
+                                    <input class="mb-0" type="password" th:field="*{subPass}" placeholder="Nhập mật khẩu xác nhận" />
+                                    <span class="text-danger error" th:if="${#fields.hasErrors('subPass')}" th:errors="*{subPass}"></span>
+                                </div>
+                                <div class="col-md-12 mb-20">
+                                    <label>Mã xác nhận</label>
+                                    <input class="mb-0" type="text" th:field="*{subCode}" placeholder="Nhập mật khẩu xác nhận" />
+                                    <span class="text-danger error" th:if="${#fields.hasErrors('subCode')}" th:errors="*{subCode}"></span>
+                                </div>
+                                <div class="col-12">
+                                    <div th:if="${message}" class="alert alert-warning alert-dismissible fade show" role="alert">
+                                        <span th:text="${message}"></span><a href="/user/login" th:text="${error}"></a>
+                                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <button class="btn btn-primary" type="submit">Đổi mật khẩu</button>
+                                    <span th:txt="${message}"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="footer">
+        <div class="footer-static-middle">
+            <div class="container">
+                <div class="footer-logo-wrap pt-50 pb-35">
+                    <div class="row">
+                        <div class="col-lg-4 col-md-6">
+                            <div class="footer-logo">
+                                <img src="/assets/user/images/menu/logo/logo.svg" alt="Footer Logo" />
+                                <p class="info" align="justify">
+                                    KLB Store chuyên cung cấp các sản phẩm điện thoại, laptop, phụ kiện chính hãng với giá cả phải chăng, chất lượng đảm bảo. Chúng tôi luôn mong muốn mang đến cho khách hàng những sản phẩm tốt nhất, dịch vụ chăm
+                                    sóc khách hàng tốt nhất.
+                                </p>
+                            </div>
+                            <ul class="des">
+                                <li>
+                                    <span>Địa chỉ: </span>
+                                    Số 288, Nguyễn Văn Linh, phường An Khánh, quận Ninh Kiều, Tp. Cần Thơ.
+                                </li>
+                                <li>
+                                    <span>Số điện thoại: </span>
+                                    <a href="#">(0292) 7300 468</a>
+                                </li>
+                                <li>
+                                    <span>Email: </span>
+                                    <a href="mailto://klbstore@gmail.com">klbstore@gmail.com</a>
+                                </li>
+                            </ul>
+                        </div>
+
+                        <div class="col-lg-2 col-md-3 col-sm-6">
+                            <div class="footer-block">
+                                <h3 class="footer-block-title">Sản phẩm</h3>
+                                <ul>
+                                    <li th:each="nhomSanPham : ${nhomSanPhamList}">
+                                        <a th:href="@{'/user/shop-list?nhomSanPhamId=' + ${nhomSanPham.nhomSanPhamId}}" th:text="${nhomSanPham.tenNhomSanPham}"></a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <div class="col-lg-2 col-md-3 col-sm-6">
+                            <div class="footer-block">
+                                <h3 class="footer-block-title">Về Chúng Tôi</h3>
+                                <ul>
+                                    <li><a href="/user/contact">Liên hệ</a></li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <div class="col-lg-4">
+                            <div class="footer-block">
+                                <h3 class="footer-block-title">Theo dõi chúng tôi tại</h3>
+                                <ul class="social-link">
+                                    <li class="twitter">
+                                        <a href="https://twitter.com/" data-toggle="tooltip" target="_blank" title="Twitter">
+                                            <i class="fa fa-twitter"></i>
+                                        </a>
+                                    </li>
+                                    <li class="rss">
+                                        <a href="https://rss.com/" data-toggle="tooltip" target="_blank" title="RSS">
+                                            <i class="fa fa-rss"></i>
+                                        </a>
+                                    </li>
+                                    <li class="google-plus">
+                                        <a href="https://www.plus.google.com/discover" data-toggle="tooltip" target="_blank" title="Google Plus">
+                                            <i class="fa fa-google-plus"></i>
+                                        </a>
+                                    </li>
+                                    <li class="facebook">
+                                        <a href="https://www.facebook.com/" data-toggle="tooltip" target="_blank" title="Facebook">
+                                            <i class="fa fa-facebook"></i>
+                                        </a>
+                                    </li>
+                                    <li class="youtube">
+                                        <a href="https://www.youtube.com/" data-toggle="tooltip" target="_blank" title="Youtube">
+                                            <i class="fa fa-youtube"></i>
+                                        </a>
+                                    </li>
+                                    <li class="instagram">
+                                        <a href="https://www.instagram.com/" data-toggle="tooltip" target="_blank" title="Instagram">
+                                            <i class="fa fa-instagram"></i>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="/assets/user/js/vendor/jquery-1.12.4.min.js"></script>
+<script src="/assets/user/js/toast.js"></script>
+<script src="/assets/user/js/vendor/popper.min.js"></script>
+
+<script src="/assets/user/js/bootstrap.min.js"></script>
+
+<script src="/assets/user/js/jquery.meanmenu.min.js"></script>
+
+<script src="/assets/user/js/wow.min.js"></script>
+
+<script src="/assets/user/js/slick.min.js"></script>
+
+<script src="/assets/user/js/owl.carousel.min.js"></script>
+
+<script src="/assets/user/js/jquery.magnific-popup.min.js"></script>
+
+<script src="/assets/user/js/isotope.pkgd.min.js"></script>
+
+<script src="/assets/user/js/imagesloaded.pkgd.min.js"></script>
+
+<script src="/assets/user/js/jquery.mixitup.min.js"></script>
+
+<script src="/assets/user/js/jquery.countdown.min.js"></script>
+
+<script src="/assets/user/js/jquery.counterup.min.js"></script>
+
+<script src="/assets/user/js/waypoints.min.js"></script>
+
+<script src="/assets/user/js/jquery.barrating.min.js"></script>
+
+<script src="/assets/user/js/jquery-ui.min.js"></script>
+
+<script src="/assets/user/js/venobox.min.js"></script>
+
+<script src="/assets/user/js/jquery.nice-select.min.js"></script>
+
+<script src="/assets/user/js/scrollUp.min.js"></script>
+
+<script src="/assets/user/js/main.js"></script>
+
+<script src="/assets/user/js/vendor/modernizr-2.8.3.min.js"></script>
+
+<script src="/assets/user/js/angular.min.js"></script>
+
+<script src="/assets/user/js/all.js"></script>
+
+<script src="/assets/user/js/address.js"></script>
+</body>
 </html>

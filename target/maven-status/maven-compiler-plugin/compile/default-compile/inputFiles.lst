@@ -80,7 +80,6 @@ E:\AD\KLBStore\src\main\java\com\klbstore\dao\PhieuXuatDAO.java
 E:\AD\KLBStore\src\main\java\com\klbstore\error\ErrorResponse.java
 E:\AD\KLBStore\src\main\java\com\klbstore\config\CartConfig.java
 E:\AD\KLBStore\src\main\java\com\klbstore\service\SessionService.java
-E:\AD\KLBStore\src\main\java\com\klbstore\controller\LoginRestController.java
 E:\AD\KLBStore\src\main\java\com\klbstore\service\MessageConfig.java
 E:\AD\KLBStore\src\main\java\com\klbstore\delivery\UnixTimestampDeserializer.java
 E:\AD\KLBStore\src\main\java\com\klbstore\extensions\MailInfo.java

@@ -181,7 +181,7 @@ public interface SanPhamDAO extends JpaRepository<SanPham, Integer> {
        "AND (:danhMucConId IS NULL OR sp.danhMucCon.danhMucConId = :danhMucConId) " +
        "AND (:sanPhamLienQuan IS NULL OR sp.sanPhamId <> :sanPhamLienQuan) " +
        "AND (:sanPhamId IS NULL OR sp.sanPhamId = :sanPhamId) " +
-       "AND (:tenSanPham IS NULL OR sp.tenSanPham LIKE :tenSanPham) " + 
+       "AND (:tenSanPham IS NULL OR sp.tenSanPham LIKE %:tenSanPham%) " +
        "AND (:moTa IS NULL OR sp.moTa LIKE %:moTa%) " +
        "AND (:xuatSu IS NULL OR sp.xuatSu LIKE :xuatSu) " +
        "AND (:giaBan IS NULL OR sp.giaBan = :giaBan) " +
