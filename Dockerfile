@@ -7,5 +7,5 @@ COPY target/*.jar KLBStore.jar
 # Copy the JDBC driver JAR to the image
 COPY mssql-jdbc-12.4.0.jre11.jar /mssql-jdbc-12.4.0.jre11.jar
 
-ENTRYPOINT ["java","-cp","/mssql-jdbc.jar:/KLBStore.jar","-jar","/KLBStore.jar"]
+ENTRYPOINT ["java","-cp","/mssql-jdbc-12.4.0.jre11.jar:/KLBStore.jar","-jar","/KLBStore.jar"]
 EXPOSE 8080
