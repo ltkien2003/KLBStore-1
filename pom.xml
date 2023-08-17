@@ -10,8 +10,8 @@
 		<relativePath /> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.klbstore</groupId>
-	<artifactId>ROOT</artifactId>
-	<packaging>war</packaging>
+	<artifactId>KLBStore</artifactId>
+	<packaging>jar</packaging>
 	<name>KLBStore</name>
 	<description>KLBStore</description>
 	<properties>
