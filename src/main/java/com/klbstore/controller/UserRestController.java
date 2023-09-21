@@ -19,7 +19,7 @@ import com.klbstore.dao.NguoiDungDAO;
 import com.klbstore.dao.SanPhamDAO;
 import com.klbstore.model.NguoiDung;
 
-@CrossOrigin(origins = "https://klbstore.azurewebsites.net/")
+@CrossOrigin(origins = "https://klbstore-dkyr.onrender.com")
 @RestController
 public class UserRestController {
     @Autowired
