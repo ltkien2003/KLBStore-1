@@ -34,7 +34,7 @@ import com.klbstore.model.NguoiDung;
 import com.klbstore.service.SessionService;
 import com.klbstore.service.ShoppingCartService;
 
-@CrossOrigin(origins = "http://localhost:8080")
+@CrossOrigin(origins = "https://klbstore.azurewebsites.net/")
 @RestController
 public class ChiTietGioHangRestController {
     @Autowired

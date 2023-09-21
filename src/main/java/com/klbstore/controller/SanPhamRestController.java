@@ -22,7 +22,7 @@ import com.klbstore.dao.SanPhamDAO;
 import com.klbstore.dto.SanPhamDTO;
 import com.klbstore.model.DanhGia;
 
-@CrossOrigin(origins = "http://localhost:8080")
+@CrossOrigin(origins = "https://klbstore.azurewebsites.net/")
 @RestController
 public class SanPhamRestController {
         @Autowired
