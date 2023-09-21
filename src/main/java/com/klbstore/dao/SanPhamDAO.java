@@ -1,8 +1,11 @@
 package com.klbstore.dao;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.List;
 
+import org.apache.tomcat.jni.Local;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -161,16 +164,16 @@ public interface SanPhamDAO extends JpaRepository<SanPham, Integer> {
 
        @Query("SELECT new com.klbstore.dto.SanPhamDTO(sp, " +
        "CASE WHEN (ggTrucTiep IS NOT NULL " +
-       "AND ggTrucTiep.ngayBatDau <= CURRENT_TIMESTAMP " +
-       "AND ggTrucTiep.ngayKetThuc >= CURRENT_TIMESTAMP) THEN TRUE ELSE FALSE END, " +
+       "AND ggTrucTiep.ngayBatDau <= :thoiGianVietNam " +
+       "AND ggTrucTiep.ngayKetThuc >= :thoiGianVietNam) THEN TRUE ELSE FALSE END, " +
        "CASE WHEN (ggTrucTiep IS NOT NULL " +
-       "AND ggTrucTiep.ngayBatDau <= CURRENT_TIMESTAMP " +
-       "AND ggTrucTiep.ngayKetThuc >= CURRENT_TIMESTAMP) THEN (sp.giaBan * (1 - COALESCE(ggTrucTiep.giamGiaTrucTiep, 0))) ELSE sp.giaBan END, " +
+       "AND ggTrucTiep.ngayBatDau <= :thoiGianVietNam " +
+       "AND ggTrucTiep.ngayKetThuc >= :thoiGianVietNam) THEN (sp.giaBan * (1 - COALESCE(ggTrucTiep.giamGiaTrucTiep, 0))) ELSE sp.giaBan END, " +
        "CASE WHEN (ggTrucTiep IS NOT NULL " +
-       "AND ggTrucTiep.ngayBatDau <= CURRENT_TIMESTAMP " +
-       "AND ggTrucTiep.ngayKetThuc >= CURRENT_TIMESTAMP) THEN CAST(ggTrucTiep.giamGiaTrucTiep * 100 AS integer) ELSE 0 END, " +
+       "AND ggTrucTiep.ngayBatDau <= :thoiGianVietNam " +
+       "AND ggTrucTiep.ngayKetThuc >= :thoiGianVietNam) THEN CAST(ggTrucTiep.giamGiaTrucTiep * 100 AS integer) ELSE 0 END, " +
        "(SELECT CAST(AVG(dg.sao) AS integer) FROM sp.sanPhamDanhGias dg INNER JOIN sp.sanPhamChiTietDonHangs spdh WHERE dg.sanPham = sp AND dg.hienThi = 1 AND spdh.donHang.tinhTrangThanhToan = 1 AND spdh.donHang.tinhTrangGiaoHang = 1 " +
-       "AND dg.ngayDanhGia <= CURRENT_TIMESTAMP)) " +
+       "AND dg.ngayDanhGia <= :thoiGianVietNam)) " +
        "FROM SanPham sp " +
        "LEFT JOIN sp.sanPhamGiamGiaTrucTieps ggTrucTiep " +
        "WHERE sp IN :sanPhams " + 
@@ -199,45 +202,45 @@ public interface SanPhamDAO extends JpaRepository<SanPham, Integer> {
        "OR (" +
        ":giamGia = TRUE " +
        "AND ggTrucTiep IS NOT NULL " +
-       "AND ggTrucTiep.ngayBatDau <= CURRENT_TIMESTAMP " +
-       "AND ggTrucTiep.ngayKetThuc >= CURRENT_TIMESTAMP" +
+       "AND ggTrucTiep.ngayBatDau <= :thoiGianVietNam " +
+       "AND ggTrucTiep.ngayKetThuc >= :thoiGianVietNam" +
        ") " +                        
        "OR (" +
        ":giamGia = FALSE " +
        "OR ggTrucTiep IS NULL " +
-       "OR (ggTrucTiep IS NOT NULL AND ggTrucTiep.ngayBatDau > CURRENT_TIMESTAMP " +
-       "AND ggTrucTiep.ngayKetThuc < CURRENT_TIMESTAMP)" +
+       "OR (ggTrucTiep IS NOT NULL AND ggTrucTiep.ngayBatDau > :thoiGianVietNam " +
+       "AND ggTrucTiep.ngayKetThuc < :thoiGianVietNam)" +
        ")) " +              
        "ORDER BY " +
-       "CASE WHEN :sortBy = 'giaTangDan' THEN (CASE WHEN (ggTrucTiep IS NOT NULL AND ggTrucTiep.ngayBatDau <= CURRENT_TIMESTAMP AND ggTrucTiep.ngayKetThuc >= CURRENT_TIMESTAMP) THEN (sp.giaBan * (1 - COALESCE(ggTrucTiep.giamGiaTrucTiep, 0))) ELSE sp.giaBan END) END ASC, " +
-       "CASE WHEN :sortBy = 'giaGiamDan' THEN (CASE WHEN (ggTrucTiep IS NOT NULL AND ggTrucTiep.ngayBatDau <= CURRENT_TIMESTAMP AND ggTrucTiep.ngayKetThuc >= CURRENT_TIMESTAMP) THEN (sp.giaBan * (1 - COALESCE(ggTrucTiep.giamGiaTrucTiep, 0))) ELSE sp.giaBan END) END DESC, " +                        
+       "CASE WHEN :sortBy = 'giaTangDan' THEN (CASE WHEN (ggTrucTiep IS NOT NULL AND ggTrucTiep.ngayBatDau <= :thoiGianVietNam AND ggTrucTiep.ngayKetThuc >= :thoiGianVietNam) THEN (sp.giaBan * (1 - COALESCE(ggTrucTiep.giamGiaTrucTiep, 0))) ELSE sp.giaBan END) END ASC, " +
+       "CASE WHEN :sortBy = 'giaGiamDan' THEN (CASE WHEN (ggTrucTiep IS NOT NULL AND ggTrucTiep.ngayBatDau <= :thoiGianVietNam AND ggTrucTiep.ngayKetThuc >= :thoiGianVietNam) THEN (sp.giaBan * (1 - COALESCE(ggTrucTiep.giamGiaTrucTiep, 0))) ELSE sp.giaBan END) END DESC, " +
        "CASE WHEN :sortBy = 'ngayTaoTangDan' THEN sp.ngayTao END ASC, " +
        "CASE WHEN :sortBy = 'ngayTaoGiamDan' THEN sp.ngayTao END DESC, " +
        "CASE WHEN :sortBy = 'soLuotXemTangDan' THEN sp.soLuotXem END ASC, " +
        "CASE WHEN :sortBy = 'soLuotXemGiamDan' THEN sp.soLuotXem END DESC, " +
-       "CASE WHEN :sortBy = 'soSaoTangDan' THEN (SELECT CAST(AVG(dg.sao) AS integer) FROM sp.sanPhamDanhGias dg WHERE dg.sanPham = sp AND dg.ngayDanhGia <= CURRENT_TIMESTAMP) END ASC, " +
-       "CASE WHEN :sortBy = 'soSaoGiamDan' THEN (SELECT CAST(AVG(dg.sao) AS integer) FROM sp.sanPhamDanhGias dg WHERE dg.sanPham = sp AND dg.ngayDanhGia <= CURRENT_TIMESTAMP) END DESC, " +
+       "CASE WHEN :sortBy = 'soSaoTangDan' THEN (SELECT CAST(AVG(dg.sao) AS integer) FROM sp.sanPhamDanhGias dg WHERE dg.sanPham = sp AND dg.ngayDanhGia <= :thoiGianVietNam) END ASC, " +
+       "CASE WHEN :sortBy = 'soSaoGiamDan' THEN (SELECT CAST(AVG(dg.sao) AS integer) FROM sp.sanPhamDanhGias dg WHERE dg.sanPham = sp AND dg.ngayDanhGia <= :thoiGianVietNam) END DESC, " +
        "CASE WHEN :sortBy = 'tenSanPhamTangDan' THEN sp.tenSanPham END ASC, " +
        "CASE WHEN :sortBy = 'tenSanPhamGiamDan' THEN sp.tenSanPham END DESC, " +
-       "CASE WHEN :sortBy = 'giamGiaTangDan' AND ggTrucTiep.ngayBatDau <= CURRENT_TIMESTAMP AND ggTrucTiep.ngayKetThuc >= CURRENT_TIMESTAMP THEN CAST(ggTrucTiep.giamGiaTrucTiep * 100 AS integer) END ASC, " +
-       "CASE WHEN :sortBy = 'giamGiaGiamDan' AND ggTrucTiep.ngayBatDau <= CURRENT_TIMESTAMP AND ggTrucTiep.ngayKetThuc >= CURRENT_TIMESTAMP THEN CAST(ggTrucTiep.giamGiaTrucTiep * 100 AS integer) END DESC")
-       List<SanPhamDTO> getDTO(@Param("sanPhams") List<SanPham> sanPhams, @Param("nhomSanPhamId") Integer nhomSanPhamId, @Param("tenNhomSanPham") String tenNhomSanPham, @Param("danhMucSanPhamId") Integer danhMucSanPhamId, @Param("tenDanhMucSanPham") String tenDanhMucSanPham, @Param("danhMucConId") Integer danhMucConId, @Param("sanPhamId") Long sanPhamId, @Param("tenSanPham") String tenSanPham, @Param("moTa") String moTa, @Param("xuatSu") String xuatSu, @Param("giaBan") Double giaBan, @Param("minGiaBan") Double minGiaBan, @Param("maxGiaBan") Double maxGiaBan, @Param("soLuotXem") Integer soLuotXem, @Param("minSoLuotXem") Integer minSoLuotXem, @Param("maxSoLuotXem") Integer maxSoLuotXem,@Param("ngayTao") LocalDate ngayTao, @Param("minNgayTao") LocalDate minNgayTao, @Param("maxNgayTao") LocalDate maxNgayTao, @Param("noiBat") Boolean noiBat, @Param("hienThi") Boolean hienThi, @Param("giamGia") Boolean giamGia, @Param("sanPhamLienQuan") Integer sanPhamLienQuan, @Param("sortBy") String sortBy);
+       "CASE WHEN :sortBy = 'giamGiaTangDan' AND ggTrucTiep.ngayBatDau <= :thoiGianVietNam AND ggTrucTiep.ngayKetThuc >= :thoiGianVietNam THEN CAST(ggTrucTiep.giamGiaTrucTiep * 100 AS integer) END ASC, " +
+       "CASE WHEN :sortBy = 'giamGiaGiamDan' AND ggTrucTiep.ngayBatDau <= :thoiGianVietNam AND ggTrucTiep.ngayKetThuc >= :thoiGianVietNam THEN CAST(ggTrucTiep.giamGiaTrucTiep * 100 AS integer) END DESC")
+       List<SanPhamDTO> getDTO(@Param("sanPhams") List<SanPham> sanPhams, @Param("nhomSanPhamId") Integer nhomSanPhamId, @Param("tenNhomSanPham") String tenNhomSanPham, @Param("danhMucSanPhamId") Integer danhMucSanPhamId, @Param("tenDanhMucSanPham") String tenDanhMucSanPham, @Param("danhMucConId") Integer danhMucConId, @Param("sanPhamId") Long sanPhamId, @Param("tenSanPham") String tenSanPham, @Param("moTa") String moTa, @Param("xuatSu") String xuatSu, @Param("giaBan") Double giaBan, @Param("minGiaBan") Double minGiaBan, @Param("maxGiaBan") Double maxGiaBan, @Param("soLuotXem") Integer soLuotXem, @Param("minSoLuotXem") Integer minSoLuotXem, @Param("maxSoLuotXem") Integer maxSoLuotXem,@Param("ngayTao") LocalDate ngayTao, @Param("minNgayTao") LocalDate minNgayTao, @Param("maxNgayTao") LocalDate maxNgayTao, @Param("noiBat") Boolean noiBat, @Param("hienThi") Boolean hienThi, @Param("giamGia") Boolean giamGia, @Param("sanPhamLienQuan") Integer sanPhamLienQuan, @Param("sortBy") String sortBy, @Param("thoiGianVietNam") LocalDateTime thoiGianVietNam);
        
        @Query("SELECT new com.klbstore.dto.SanPhamDTO(sp, " +
        "CASE WHEN (ggTrucTiep IS NOT NULL " +
-       "AND ggTrucTiep.ngayBatDau <= CURRENT_TIMESTAMP " +
-       "AND ggTrucTiep.ngayKetThuc >= CURRENT_TIMESTAMP) THEN TRUE ELSE FALSE END, " +
+       "AND ggTrucTiep.ngayBatDau <= :thoiGianVietNam " +
+       "AND ggTrucTiep.ngayKetThuc >= :thoiGianVietNam) THEN TRUE ELSE FALSE END, " +
        "CASE WHEN (ggTrucTiep IS NOT NULL " +
-       "AND ggTrucTiep.ngayBatDau <= CURRENT_TIMESTAMP " +
-       "AND ggTrucTiep.ngayKetThuc >= CURRENT_TIMESTAMP) THEN (sp.giaBan * (1 - COALESCE(ggTrucTiep.giamGiaTrucTiep, 0))) ELSE sp.giaBan END, " +
+       "AND ggTrucTiep.ngayBatDau <= :thoiGianVietNam " +
+       "AND ggTrucTiep.ngayKetThuc >= :thoiGianVietNam) THEN (sp.giaBan * (1 - COALESCE(ggTrucTiep.giamGiaTrucTiep, 0))) ELSE sp.giaBan END, " +
        "CASE WHEN (ggTrucTiep IS NOT NULL " +
-       "AND ggTrucTiep.ngayBatDau <= CURRENT_TIMESTAMP " +
-       "AND ggTrucTiep.ngayKetThuc >= CURRENT_TIMESTAMP) THEN CAST(ggTrucTiep.giamGiaTrucTiep * 100 AS integer) ELSE 0 END, " +
+       "AND ggTrucTiep.ngayBatDau <= :thoiGianVietNam " +
+       "AND ggTrucTiep.ngayKetThuc >= :thoiGianVietNam) THEN CAST(ggTrucTiep.giamGiaTrucTiep * 100 AS integer) ELSE 0 END, " +
        "(SELECT CAST(AVG(dg.sao) AS integer) FROM sp.sanPhamDanhGias dg WHERE dg.sanPham = sp " +
-       "AND dg.ngayDanhGia <= CURRENT_TIMESTAMP)) " +
+       "AND dg.ngayDanhGia <= :thoiGianVietNam)) " +
        "FROM SanPham sp " +
        "LEFT JOIN sp.sanPhamGiamGiaTrucTieps ggTrucTiep " +
        "WHERE sp IN :sanPhams " + 
        "AND (sp.sanPhamId <> :related) ")
-       List<SanPhamDTO> findDTO(@Param("sanPhams") List<SanPham> sanPhams, @Param("related") Long related);
+       List<SanPhamDTO> findDTO(@Param("sanPhams") List<SanPham> sanPhams, @Param("related") Long related, @Param("thoiGianVietNam")LocalDateTime thoiGianVietNam);
 }

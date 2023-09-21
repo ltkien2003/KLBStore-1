@@ -1,4 +1,5 @@
 com\klbstore\dao\DanhMucConDAO.class
+com\klbstore\extensions\VNT.class
 com\klbstore\delivery\Ward.class
 com\klbstore\error\ErrorResponse.class
 com\klbstore\dto\Login.class

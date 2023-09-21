@@ -37,7 +37,7 @@ public class DateSupport {
     }
 
     public static Date now() {
-        return new Date();
+        return VNT.getThoiGianVietNam();
     }
 }
 

@@ -18,6 +18,7 @@ import javax.validation.constraints.Pattern;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import com.klbstore.extensions.VNT;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -60,7 +61,7 @@ public class NguoiDung implements Serializable {
 
     @Temporal(TemporalType.DATE)
     @Column
-    private Date ngayDangKy = new Date();
+    private Date ngayDangKy = VNT.getThoiGianVietNam();
 
     @Column
     private boolean trangThaiKhoa = false;

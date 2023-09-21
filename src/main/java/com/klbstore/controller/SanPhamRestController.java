@@ -1,11 +1,13 @@
 package com.klbstore.controller;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import com.klbstore.extensions.VNT;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -85,7 +87,7 @@ public class SanPhamRestController {
                                                 ngayTao.orElse(null),
                                                 minNgayTao.orElse(null), maxNgayTao.orElse(null), noiBat.orElse(null),
                                                 hienThi.orElse(null),
-                                                giamGia.orElse(null), sanPhamLienQuan.orElse(null), sortBy.orElse(null))
+                                                giamGia.orElse(null), sanPhamLienQuan.orElse(null), sortBy.orElse(null), VNT.getLocalDateTime())
                                 .stream()
                                 .peek(dto -> {
                                         if (dto.getSanPham() != null && dto.getSanPham().getSanPhamDanhGias() != null) {
@@ -166,7 +168,7 @@ public class SanPhamRestController {
                                                 ngayTao.orElse(null),
                                                 minNgayTao.orElse(null), maxNgayTao.orElse(null), noiBat.orElse(null),
                                                 hienThi.orElse(null),
-                                                giamGia.orElse(null), sanPhamLienQuan.orElse(null), sortBy.orElse(null))
+                                                giamGia.orElse(null), sanPhamLienQuan.orElse(null), sortBy.orElse(null), VNT.getLocalDateTime())
                                 .stream()
                                 .peek(dto -> {
                                         if (dto.getSanPham() != null && dto.getSanPham().getSanPhamDanhGias() != null) {
@@ -201,7 +203,7 @@ public class SanPhamRestController {
                                                                 minSoLuongTrongKho.orElse(null),
                                                                 maxSoLuongTrongKho.orElse(null), mauSacId.orElse(null), tenMauSac.orElse(null),
                                                                 duongDanAnh.orElse(null),
-                                                                viTriLuuTru.orElse(null)), related)
+                                                                viTriLuuTru.orElse(null)), related, VNT.getLocalDateTime())
                                 .stream()
                                 .peek(dto -> {
                                         if (dto.getSanPham() != null && dto.getSanPham().getSanPhamDanhGias() != null) {

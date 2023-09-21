@@ -195,7 +195,7 @@
                                 </div>
                                 <div class="col-md-6">
                                     <div class="checkout-form-list">
-                                        <label>Ngày sinh </label>
+                                        <label>Ngày sinh <span class="required">*</span></label>
                                         <input placeholder="Ngày sinh" type="date" th:field="*{ngaySinh}" style="background-color: white;" />
                                     </div>
                                 </div>
@@ -208,7 +208,7 @@
                                 </div>
                                 <div class="col-md-6">
                                     <div class="checkout-form-list">
-                                        <label>Giới tính </label>
+                                        <label>Giới tính <span class="required">*</span></label>
                                         <select th:field="*{gioiTinh}" style="background-color: white;">
                                             <option th:value="'true'" th:text="Nam"></option>
                                             <option th:value="'false'" th:text="Nữ"></option>
@@ -224,13 +224,13 @@
                                 </div>
                                 <div class="col-md-12">
                                     <div class="checkout-form-list">
-                                        <label>Địa chỉ </label>
+                                        <label>Địa chỉ <span class="required">*</span></label>
                                         <input th:field="*{diaChi}" placeholder="Địa chỉ" type="text" />
                                     </div>
                                 </div>
                                 <div class="col-md-12">
                                     <div class="checkout-form-list">
-                                        <label>Tỉnh/Thành phố:</label>
+                                        <label>Tỉnh/Thành phố: <span class="required">*</span></label>
                                         <select th:data-province="*{tinhThanh}" id="tinhThanh" ng-model="selectedProvince" ng-change="getDistricts()" th:field="*{tinhThanh}">
                                             <option value="" disabled selected hidden>Chọn tỉnh/thành phố</option>
                                             <option ng-repeat="province in provinces" value="{{province.ProvinceName}}">{{province.ProvinceName}}</option>
@@ -240,7 +240,7 @@
                                 </div>
                                 <div class="col-md-12">
                                     <div class="checkout-form-list">
-                                        <label>Quận/Huyện:</label>
+                                        <label>Quận/Huyện: <span class="required">*</span></label>
                                         <select th:data-district="*{quanHuyen}" ng-model="selectedDistrict" ng-change="getWards()" th:field="*{quanHuyen}">
                                             <option value="" disabled selected hidden>Chọn quận/huyện</option>
                                             <option ng-repeat="district in districts" value="{{district.DistrictName}}">{{district.DistrictName}}</option>
@@ -250,7 +250,7 @@
                                 </div>
                                 <div class="col-md-12">
                                     <div class="checkout-form-list">
-                                        <label>Xã/Phường:</label>
+                                        <label>Xã/Phường: <span class="required">*</span></label>
                                         <select th:data-ward="*{xaPhuong}" ng-model="selectedWard" th:field="*{xaPhuong}">
                                             <option value="" disabled selected hidden>Chọn xã/phường</option>
                                             <option ng-repeat="ward in wards" value="{{ ward.WardName }}">{{ ward.NameExtension[0] }}</option>
@@ -287,7 +287,7 @@
                         <div class="col-lg-4 col-md-6">
                             <div class="footer-logo">
                                 <img src="/assets/user/images/menu/logo/logo.svg" alt="Footer Logo" />
-                                <p class="info" align="justify">
+                                <p class="info text-justify">
                                     KLB Store chuyên cung cấp các sản phẩm điện thoại, laptop, phụ kiện chính hãng với giá cả phải chăng, chất lượng đảm bảo. Chúng tôi luôn mong muốn mang đến cho khách hàng những sản phẩm tốt nhất, dịch vụ chăm
                                     sóc khách hàng tốt nhất.
                                 </p>

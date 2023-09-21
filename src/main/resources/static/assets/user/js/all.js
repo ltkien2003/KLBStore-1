@@ -209,29 +209,23 @@ app.controller("myCtrl", function ($scope, $http, $timeout) {
 });
 
 function changeSortBy(value) {
-  if (value == "") {
-    var url = window.location.href;
-    var separator = url.indexOf("?") !== -1 ? "&" : "?";
+  var url = new URL(window.location.href);
 
-    if (url.includes("sortBy=")) {
-      url = url.replace(/(sortBy=)[^\&]+/, "");
-      if (url.endsWith("?") || url.endsWith("&")) {
-        url = url.slice(0, -1); // Remove trailing '?' or '&'
-      }
-    }
-
-    window.location.href = url;
-    return;
-  }
-  var url = window.location.href;
-  var separator = url.indexOf("?") !== -1 ? "&" : "?";
-  if (url.includes("sortBy=")) {
-    url = url.replace(/(sortBy=)[^\&]+/, "$1" + value);
+  if (value === "") {
+    url.searchParams.delete("sortBy");
   } else {
-    url = url + separator + "sortBy=" + value;
+    url.searchParams.set("sortBy", value);
   }
-  window.location.href = url;
+
+  window.location.href = url.href;
 }
+
+
+
+
+
+
+
 function updateSelectedPaymentMethod(element, paymentMethodId) {
   const selectedPaymentMethod = document.getElementById(
     "selectedPaymentMethod"

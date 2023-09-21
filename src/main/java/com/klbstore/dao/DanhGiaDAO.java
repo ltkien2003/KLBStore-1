@@ -13,19 +13,23 @@ import com.klbstore.model.DanhGia;
 
 public interface DanhGiaDAO extends JpaRepository<DanhGia, Integer> {
 
-    @Query(value = "SELECT ND.HoTen, DG.Sao, DG.NoiDung, " +
+    @Query(value = "DECLARE @MuiGioVietNam INT; " +
+            "SET @MuiGioVietNam = 7; " +
+            "DECLARE @ThoiGianHienTaiUTC DATETIME; " +
+            "SET @ThoiGianHienTaiUTC = GETUTCDATE(); " +
+            "DECLARE @ThoiGianVietNam DATETIME; " +
+            "SET @ThoiGianVietNam = SWITCHOFFSET(@ThoiGianHienTaiUTC, DATEPART(TZOFFSET, SYSDATETIMEOFFSET()) / 60 + @MuiGioVietNam * 60); " +
+            "SELECT ND.HoTen, DG.Sao, DG.NoiDung, " +
             "CASE " +
-            "   WHEN DATEDIFF(DAY, DH.NgayGiaoHang, GETDATE()) >= 365 THEN DATEDIFF(YEAR, DH.NgayGiaoHang, GETDATE()) "
-            +
-            "   WHEN DATEDIFF(DAY, DH.NgayGiaoHang, GETDATE()) >= 30 THEN DATEDIFF(MONTH, DH.NgayGiaoHang, GETDATE()) "
-            +
-            "   WHEN DATEDIFF(DAY, DH.NgayGiaoHang, GETDATE()) >= 7 THEN DATEDIFF(WEEK, DH.NgayGiaoHang, GETDATE()) " +
-            "   ELSE DATEDIFF(DAY, DH.NgayGiaoHang, GETDATE()) " +
+            "   WHEN DATEDIFF(DAY, DH.NgayGiaoHang, @ThoiGianVietNam) >= 365 THEN DATEDIFF(YEAR, DH.NgayGiaoHang, @ThoiGianVietNam) " +
+            "   WHEN DATEDIFF(DAY, DH.NgayGiaoHang, @ThoiGianVietNam) >= 30 THEN DATEDIFF(MONTH, DH.NgayGiaoHang, @ThoiGianVietNam) " +
+            "   WHEN DATEDIFF(DAY, DH.NgayGiaoHang, @ThoiGianVietNam) >= 7 THEN DATEDIFF(WEEK, DH.NgayGiaoHang, @ThoiGianVietNam) " +
+            "   ELSE DATEDIFF(DAY, DH.NgayGiaoHang, @ThoiGianVietNam) " +
             "END AS ThoiGianSuDung, " +
             "CASE " +
-            "   WHEN DATEDIFF(DAY, DH.NgayGiaoHang, GETDATE()) >= 365 THEN N'năm' " +
-            "   WHEN DATEDIFF(DAY, DH.NgayGiaoHang, GETDATE()) >= 30 THEN N'tháng' " +
-            "   WHEN DATEDIFF(DAY, DH.NgayGiaoHang, GETDATE()) >= 7 THEN N'tuần' " +
+            "   WHEN DATEDIFF(DAY, DH.NgayGiaoHang, @ThoiGianVietNam) >= 365 THEN N'năm' " +
+            "   WHEN DATEDIFF(DAY, DH.NgayGiaoHang, @ThoiGianVietNam) >= 30 THEN N'tháng' " +
+            "   WHEN DATEDIFF(DAY, DH.NgayGiaoHang, @ThoiGianVietNam) >= 7 THEN N'tuần' " +
             "   ELSE 'ngày' " +
             "END AS DonViThoiGian " +
             "FROM DanhGia DG " +
@@ -40,16 +44,22 @@ public interface DanhGiaDAO extends JpaRepository<DanhGia, Integer> {
             "   AND SP.SanPhamID = :sanPhamId " +
             "ORDER BY ThoiGianSuDung DESC", nativeQuery = true)
     List<Object[]> findReviewsForProduct(@Param("sanPhamId") Long sanPhamId);
+
     
     @Transactional
     @Modifying
-    @Query(value = "INSERT INTO DanhGia (SanPhamID, NoiDung, NguoiDungID, NgayDanhGia, HienThi, Sao) " +
-                   "VALUES (:sanPhamId, :noiDung, :nguoiDungId, GETDATE(), :hienThi, :sao)", nativeQuery = true)
-    void createDanhGia(@Param("sanPhamId") Integer sanPhamId,
-                       @Param("noiDung") String noiDung,
-                       @Param("nguoiDungId") Integer nguoiDungId,
-                       @Param("hienThi") Boolean hienThi,
-                       @Param("sao") Integer sao);
+    @Query(value = "DECLARE @MuiGioVietNam INT; " +
+            "SET @MuiGioVietNam = 7; " +
+            "DECLARE @ThoiGianHienTaiUTC DATETIME; " +
+            "SET @ThoiGianHienTaiUTC = GETUTCDATE(); " +
+            "DECLARE @ThoiGianVietNam DATETIME; " +
+            "SET @ThoiGianVietNam = SWITCHOFFSET(@ThoiGianHienTaiUTC, DATEPART(TZOFFSET, SYSDATETIMEOFFSET()) / 60 + @MuiGioVietNam * 60); " +
+            "INSERT INTO DanhGia (SanPhamID, NoiDung, NguoiDungID, NgayDanhGia, HienThi, Sao) " +
+            "VALUES (:sanPhamId, :noiDung, :nguoiDungId, @ThoiGianVietNam, :hienThi, :sao)", nativeQuery = true)
+    void createDanhGia(@Param("sanPhamId") Integer sanPhamId, @Param("noiDung") String noiDung,
+                      @Param("nguoiDungId") Integer nguoiDungId, @Param("hienThi") boolean hienThi,
+                      @Param("sao") int sao);
+
 
     @Query(value = "DECLARE @CoTheDanhGia BIT; " +
             "IF EXISTS ( " +

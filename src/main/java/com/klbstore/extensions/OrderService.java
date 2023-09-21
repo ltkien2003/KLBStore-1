@@ -36,10 +36,9 @@ public class OrderService {
         mailerService.queue(to, "THANH TOÁN ĐƠN HÀNG THÀNH CÔNG", body);
     }
 
-    private String convertDate(LocalDateTime ngayDatHang) {
-        LocalDateTime localDateTime = LocalDateTime.now();
+    private static String convertDate(LocalDateTime ngayDatHang) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
-        return localDateTime.format(formatter);
+        return ngayDatHang.format(formatter);
     }
 
     public String formatCurrency(Double amount) {
@@ -129,7 +128,7 @@ public class OrderService {
                 "                " + productsHtml + "\n" +
                 "                <p>" + "Ngày đặt hàng: " + "<strong>" + convertDate(donHang.getNgayDatHang())
                 + "</strong></p>\n" +
-                "                <p>" + "Số điện thoại: " + "<strong>" + donHang.getNguoiDung().getHoTen()
+                "                <p>" + "Số điện thoại: " + "<strong>" + donHang.getNguoiDung().getSdt()
                 + "</strong></p>\n" +
                 "                <p>" + "Tổng cộng: " + "<strong>"
                 + formatCurrency(donHang.getPhiVanChuyen() + donHang.getTongTienSanPham()) + "</strong></p>\n" +

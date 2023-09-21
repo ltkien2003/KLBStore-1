@@ -376,6 +376,38 @@
                                                                     </div>
                                                                 </div>
                                                             </div>
+                                                            <div class="col-lg-6">
+                                                                <div class="li-review-content">
+                                                                    <div class="feedback-area">
+                                                                        <div class="feedback">
+                                                                            <h3 class="feedback-title">Đánh giá sản phẩm</h3>
+                                                                            <form th:action="@{|/user/rate?productId=${chiTiet.get(0).get('sanPham').get('sanPhamId')}&productName=${chiTiet.get(0).get('sanPham').get('tenSanPham').asText()}|}" method="POST">
+                                                                                <p class="your-opinion">
+                                                                                    <label>Đánh giá</label>
+                                                                                    <span>
+                                                                                                <select class="star-rating" name="rating">
+                                                                                                    <option value="1">1</option>
+                                                                                                    <option value="2">2</option>
+                                                                                                    <option value="3">3</option>
+                                                                                                    <option value="4">4</option>
+                                                                                                    <option value="5">5</option>
+                                                                                                </select>
+                                                                                    </span>
+                                                                                </p>
+                                                                                <p class="feedback-form">
+                                                                                    <label for="feedback">Nội dung đánh giá</label>
+                                                                                    <textarea id="feedback" name="comment" cols="45" rows="18" aria-required="true" maxlength="200" required></textarea>
+                                                                                </p>
+                                                                                <div class="feedback-input">
+                                                                                    <div class="feedback-btn pb-15">
+                                                                                        <button class="btn btn-primary">Gửi</button>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </form>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
                                                         </div>
                                                     </div>
                                                 </div>

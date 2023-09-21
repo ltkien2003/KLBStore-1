@@ -21,6 +21,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 import com.klbstore.dao.*;
+import com.klbstore.extensions.*;
 import com.klbstore.model.*;
 import com.klbstore.payload.LoginRequest;
 import com.klbstore.payload.LoginResponse;
@@ -55,11 +56,6 @@ import com.klbstore.dto.Login;
 import com.klbstore.dto.NguoiDungDTO;
 import com.klbstore.dto.Register;
 import com.klbstore.dto.ResetPassword;
-import com.klbstore.extensions.ContactService;
-import com.klbstore.extensions.HashedPasswordArgon2;
-import com.klbstore.extensions.OrderService;
-import com.klbstore.extensions.OtpGenerator;
-import com.klbstore.extensions.OtpService;
 import com.klbstore.jwt.JwtTokenProvider;
 import com.klbstore.service.CookieService;
 import com.klbstore.service.MailerServiceImpl;
@@ -113,6 +109,7 @@ public class UserController {
     @Autowired
     HoatDongSaiMatKhauDAO hoatDongSaiMatKhauDAO;
 
+
     public NguoiDung getNguoiDung() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         if (auth != null && auth.isAuthenticated()) {
@@ -125,7 +122,7 @@ public class UserController {
     @GetMapping("/user/log-out")
     public String logOut() {
         sessionService.invalidateSession();
-        return "redirect:/login";
+        return "redirect:/user/login";
     }
 
     @GetMapping("/user/404")
@@ -147,7 +144,7 @@ public class UserController {
         return token;
     }
 
-    @GetMapping(value = { "/", "/user/index" })
+    @GetMapping(value = {"/", "/user/index"})
     public String index(Model model) {
         model.addAttribute("noiBat",
                 restTemplate.get("http://localhost:8080/rest/xinchao?hienThi=true&noiBat=true&sortBy=giamGiaGiamDan"));
@@ -190,7 +187,7 @@ public class UserController {
                 if (hoatDongSaiMatKhau != null) {
                     Date thoiGianKhoaTaiKhoan = hoatDongSaiMatKhau.getThoiGianKhoaTaiKhoan();
                     System.out.println("Thời gian khóa tài khoản: " + thoiGianKhoaTaiKhoan);
-                    Date thoiGianHienTai = new Date();
+                    Date thoiGianHienTai = VNT.getThoiGianVietNam();
 
                     if (thoiGianKhoaTaiKhoan != null
                             && thoiGianHienTai.getTime() - thoiGianKhoaTaiKhoan.getTime() >= 3600000) {
@@ -207,7 +204,7 @@ public class UserController {
                     }
                 }
             }
-            if(nd == null) {
+            if (nd == null) {
                 model.addAttribute("message", "Tài khoản hoặc mật khẩu không hợp lệ!");
                 return "login";
             }
@@ -246,13 +243,13 @@ public class UserController {
                         // Hoạt động sai mật khẩu đã tồn tại, cập nhật số lần sai mật khẩu
                         int soLanSaiMatKhau = hoatDongSaiMatKhau.getSoLanSaiMatKhau();
                         hoatDongSaiMatKhau.setSoLanSaiMatKhau(soLanSaiMatKhau + 1);
-                        hoatDongSaiMatKhau.setThoiGianSaiMatKhauCuoi(new Date());
+                        hoatDongSaiMatKhau.setThoiGianSaiMatKhauCuoi(VNT.getThoiGianVietNam());
                     } else {
                         // Hoạt động sai mật khẩu chưa tồn tại, tạo mới
                         hoatDongSaiMatKhau = new HoatDongSaiMatKhau();
                         hoatDongSaiMatKhau.setNguoiDung(nd);
                         hoatDongSaiMatKhau.setSoLanSaiMatKhau(1);
-                        hoatDongSaiMatKhau.setThoiGianSaiMatKhauCuoi(new Date());
+                        hoatDongSaiMatKhau.setThoiGianSaiMatKhauCuoi(VNT.getThoiGianVietNam());
                         hoatDongSaiMatKhau.setDiaChiIp(request.getRemoteAddr());
                     }
 
@@ -264,7 +261,7 @@ public class UserController {
                         nd.setTrangThaiKhoa(true);
 
                         Calendar calendar = Calendar.getInstance();
-                        calendar.setTime(new Date());
+                        calendar.setTime(VNT.getThoiGianVietNam());
                         calendar.add(Calendar.HOUR_OF_DAY, 1); // Thêm 1 giờ
                         Date thoiGianMoKhoa = calendar.getTime();
 
@@ -336,14 +333,21 @@ public class UserController {
 
     @PostMapping("/user/register")
     public String getRegister(Model model, @Valid @ModelAttribute("register") Register register,
-            BindingResult result) {
+                              BindingResult result) {
         try {
             Pattern p = Pattern.compile(
                     "^(?=.*[`!@#\\$%\\^&*()-=_+\\\\[\\\\]{}|;':\\\",./<>?])(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9])\\S{8,}$");
             Matcher m = p.matcher(register.getMatKhau());
             Boolean e = m.matches();
+            String regex = "^(0?)(3[2-9]|5[6|8|9]|7[0|6-9]|8[0-6|8|9]|9[0-4|6-9])[0-9]{7}$";
+            Pattern pattern = Pattern.compile(regex);
+            Matcher matcher = pattern.matcher(register.getSdt());
             if (!result.hasErrors()) {
                 Boolean check = true;
+                if (!matcher.matches()) {
+                    model.addAttribute("errorMessage", "Số điện thoại không hợp lệ!");
+                    return "user/register";
+                }
                 if (nguoiDungDao.findByTenDangNhap(register.getTenDangNhap()) != null) {
                     check = false;
                     model.addAttribute("errorMessage", "Tên đăng nhập đã tồn tại!");
@@ -383,7 +387,7 @@ public class UserController {
                     try {
                         NguoiDung user = nguoiDungDao.findByEmail(register.getEmail());
 
-                        Date curDate = new Date();
+                        Date curDate = VNT.getThoiGianVietNam();
                         MaXacNhan maXacNhan = maXacNhanDAO.findByNguoiDungId(user.getNguoiDungId());
                         if (maXacNhan == null || maXacNhan.getDaXacNhan()
                                 || (curDate.compareTo(maXacNhan.getHanHieuLucOtp()) > 0)) {
@@ -391,7 +395,7 @@ public class UserController {
                             MaXacNhan mxacnhan = new MaXacNhan();
                             mxacnhan.setNguoiDungId(user.getNguoiDungId());
                             mxacnhan.setMaOtp(otp);
-                            mxacnhan.setNgayTaoOtp(new Date());
+                            mxacnhan.setNgayTaoOtp(VNT.getThoiGianVietNam());
                             maXacNhanDAO.save(mxacnhan);
 
                             // Gửi email
@@ -492,7 +496,7 @@ public class UserController {
             try {
                 NguoiDung user = nguoiDungDao.findByEmail(sendForm.getEmail());
 
-                Date curDate = new Date();
+                Date curDate = VNT.getThoiGianVietNam();
                 MaXacNhan maXacNhan = maXacNhanDAO.findByNguoiDungId(user.getNguoiDungId());
                 // MaXacNhan hết hạn tạo mã mới
                 if (maXacNhan == null || maXacNhan.getDaXacNhan()
@@ -501,7 +505,7 @@ public class UserController {
                     MaXacNhan mxacnhan = new MaXacNhan();
                     mxacnhan.setNguoiDungId(user.getNguoiDungId());
                     mxacnhan.setMaOtp(otp);
-                    mxacnhan.setNgayTaoOtp(new Date());
+                    mxacnhan.setNgayTaoOtp(VNT.getThoiGianVietNam());
                     maXacNhanDAO.save(mxacnhan);
 
                     // Gửi email
@@ -526,7 +530,7 @@ public class UserController {
 
     @PostMapping("/user/rate")
     public String rate(@RequestParam("productId") Integer sanPhamId, @RequestParam("productName") String tenSanPham,
-            @RequestParam("rating") Integer rating, @RequestParam("comment") String comment) {
+                       @RequestParam("rating") Integer rating, @RequestParam("comment") String comment) {
         if (getNguoiDung() != null) {
             danhGiaDAO.createDanhGia(sanPhamId, comment, getNguoiDung().getNguoiDungId(), true, rating);
         }
@@ -546,7 +550,7 @@ public class UserController {
     // Sang trang quên mk
     @PostMapping("/user/forgot-password")
     public String postForgotPassword(Model model, @Valid @ModelAttribute("sendForm") EmailForm sendForm,
-            BindingResult result) {
+                                     BindingResult result) {
         String message = "Email của bạn chưa được đăng ký";
 
         if (result.hasErrors()) {
@@ -555,7 +559,7 @@ public class UserController {
             try {
                 NguoiDung user = nguoiDungDao.findByEmail(sendForm.getEmail());
                 MaXacNhan otp = maXacNhanDAO.findByNguoiDungId(user.getNguoiDungId());
-                Date curDate = new Date();
+                Date curDate = VNT.getThoiGianVietNam();
                 if (otp != null && !otp.getDaXacNhan() && !(curDate.compareTo(otp.getHanHieuLucOtp()) > 0)) {
                     if (sendForm.getEmail().equals(user.getEmail()) && sendForm.getMxn().equals(otp.getMaOtp())) {
                         sessionService.set("user-email", user.getEmail());
@@ -587,7 +591,7 @@ public class UserController {
     // Đổi mật khẩu xử lý
     @PostMapping("/user/change-password")
     public String changePassword(Model model, @Valid @ModelAttribute("changePassword") ResetPassword change,
-            BindingResult result) {
+                                 BindingResult result) {
         if (!result.hasErrors()) {
             NguoiDung nguoiDung = nguoiDungDao.findByEmail(sessionService.get("user-email"));
             Pattern p = Pattern.compile(
@@ -606,7 +610,7 @@ public class UserController {
                     nguoiDungDao.save(nguoiDung);
                     model.addAttribute("message", "Đổi mật khẩu thành công. Vui lòng đăng nhập lại");
                     sessionService.remove("user-email");
-                    return "redirect:/login";
+                    return "redirect:/user/login";
                 } catch (Exception e) {
                     model.addAttribute("message", "Có lỗi xảy ra. Quay về ");
                     model.addAttribute("error", "trang đăng nhập");
@@ -667,7 +671,7 @@ public class UserController {
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
         try {
             Date ngaySinh = dateFormat.parse(ngaySinhString);
-            Date ngayHienTai = new Date();
+            Date ngayHienTai = VNT.getThoiGianVietNam();
 
             Calendar calNgaySinh = Calendar.getInstance();
             calNgaySinh.setTime(ngaySinh);
@@ -692,7 +696,7 @@ public class UserController {
 
     @PostMapping("/user/profile")
     public String profileUpdate(Model model, @Valid @ModelAttribute("userProfile") NguoiDungDTO userForm,
-            BindingResult result) {
+                                BindingResult result) {
         if (result.hasErrors()) {
             if (userForm.getDiaChi().equals("")) {
                 model.addAttribute("message", "Địa chỉ không được để trống!");
@@ -757,7 +761,7 @@ public class UserController {
     // Đổi mật khẩu xử lý từ profile
     @PostMapping("/user/profile/change-password")
     public String changePasswordProfile(Model model, @Valid @ModelAttribute("changePassword") ChangePassword change,
-            BindingResult result) {
+                                        BindingResult result) {
         if (!result.hasErrors()) {
             NguoiDung nguoiDung = getNguoiDung();
             Pattern p = Pattern.compile(
@@ -819,7 +823,7 @@ public class UserController {
         NguoiDung nguoiDung = getNguoiDung();
         if (nguoiDung == null) {
             sessionService.set("checkout", "true");
-            return "redirect:/login";
+            return "redirect:/user/login";
         } else {
             if (nguoiDung.getDiaChi() != null) {
                 List<HinhThucThanhToan> paymentMethods = htttDAO.findAll();
@@ -864,6 +868,11 @@ public class UserController {
                 model.addAttribute("userProfile", nddto);
                 model.addAttribute("message",
                         "Bạn chưa có địa chỉ giao hàng. Vui lòng cập nhật địa chỉ giao hàng trước khi thanh toán.");
+                String checkout = sessionService.get("checkout");
+                if (checkout != null) {
+                } else {
+                    sessionService.set("checkout", "true");
+                }
                 return "user/profile";
             }
             return "user/checkout";
@@ -1052,7 +1061,7 @@ public class UserController {
 
     @GetMapping("/user/payment")
     public String payment(@RequestParam("vnp_ResponseCode") String vnp_ResponseCode,
-            @RequestParam("vnp_OrderInfo") String vnp_OrderInfo, Model model) {
+                          @RequestParam("vnp_OrderInfo") String vnp_OrderInfo, Model model) {
         if (vnp_ResponseCode.equals("00")) {
             Integer donHangId = getDonHangId(vnp_OrderInfo);
             DonHang donHang = donHangDAO.findById(donHangId).orElse(null);
@@ -1079,8 +1088,8 @@ public class UserController {
 
     @GetMapping("/user/product-details")
     public String getProductDetails(@RequestParam("productId") Integer productId,
-            @RequestParam("productName") String productName,
-            Model model) {
+                                    @RequestParam("productName") String productName,
+                                    Model model) {
         if (productId == null || productName == null) {
             return "redirect:/user/404";
         }
@@ -1104,9 +1113,9 @@ public class UserController {
 
     @RequestMapping("/user/shop-list")
     public String searchAndPage(Model model,
-            @RequestParam(value = "page", defaultValue = "1") int page,
-            @RequestParam(value = "nhomSanPhamId", defaultValue = "") int nhomSanPhamId,
-            @RequestParam(value = "sortBy", defaultValue = "") String sortBy) {
+                                @RequestParam(value = "page", defaultValue = "1") int page,
+                                @RequestParam(value = "nhomSanPhamId", defaultValue = "") int nhomSanPhamId,
+                                @RequestParam(value = "sortBy", defaultValue = "") String sortBy) {
         model.addAttribute("pg", restTemplate.get("http://localhost:8080/rest/sanpham?hienThi=true" + "&page=" + page
                 + "&nhomSanPhamId=" + nhomSanPhamId + "&sortBy=" + sortBy));
         model.addAttribute("sortBy", sortBy);
@@ -1115,9 +1124,9 @@ public class UserController {
 
     @RequestMapping("/user/search")
     public String search(Model model,
-            @RequestParam(value = "keywords", defaultValue = "") String keywords,
-            @RequestParam(value = "page", defaultValue = "1") int page,
-            @RequestParam(value = "sortBy", defaultValue = "") String sortBy) {
+                         @RequestParam(value = "keywords", defaultValue = "") String keywords,
+                         @RequestParam(value = "page", defaultValue = "1") int page,
+                         @RequestParam(value = "sortBy", defaultValue = "") String sortBy) {
         model.addAttribute("pg", restTemplate.get("http://localhost:8080/rest/sanpham?hienThi=true" + "&page=" + page
                 + "&tenSanPham=" + keywords + "&sortBy=" + sortBy));
         model.addAttribute("sortBy", sortBy);
@@ -1134,9 +1143,9 @@ public class UserController {
         if (nguoiDung != null) {
             chiTietGioHangDAO.kiemTraVaXoaSanPhamKhongHopLeTrongGioHang(nguoiDung.getNguoiDungId());
             AllChiTietGioHangDTO allChiTietGioHangDTO = new AllChiTietGioHangDTO(
-                    chiTietGioHangDAO.layDanhSachSanPhamTrongGioHangTheoNguoiDung(nguoiDung.getNguoiDungId()),
+                    chiTietGioHangDAO.layDanhSachSanPhamTrongGioHangTheoNguoiDung(nguoiDung.getNguoiDungId(), VNT.getLocalDateTime()),
                     chiTietGioHangDAO.tongSoSanPhamTrongGioHang(nguoiDung.getNguoiDungId()),
-                    chiTietGioHangDAO.tinhTongTienTrongGioHang(nguoiDung.getNguoiDungId()), null,
+                    chiTietGioHangDAO.tinhTongTienTrongGioHang(nguoiDung.getNguoiDungId(), VNT.getLocalDateTime()), null,
                     null);
             model.addAttribute("allCart", allChiTietGioHangDTO);
         } else {
@@ -1197,7 +1206,7 @@ public class UserController {
 
     @GetMapping("/user/order-details")
     public String getOrder(@RequestParam(name = "donHangId", required = false) Integer donHangId,
-            Model model) {
+                           Model model) {
         NguoiDung nguoiDung = getNguoiDung();
         if (nguoiDung != null) {
             List<ChiTietDonHang> ctdh = chiTietDonHangDAO.findByDonHangId(donHangId);

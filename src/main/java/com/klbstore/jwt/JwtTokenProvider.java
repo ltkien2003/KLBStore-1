@@ -2,6 +2,7 @@ package com.klbstore.jwt;
 
 import java.util.Date;
 
+import com.klbstore.extensions.VNT;
 import org.springframework.stereotype.Component;
 
 import com.klbstore.model.CustomUserDetails;
@@ -22,7 +23,7 @@ public class JwtTokenProvider {
 
     public String generateToken(CustomUserDetails userDetails) {
         // Lấy thông tin user
-        Date now = new Date();
+        Date now = VNT.getThoiGianVietNam();
         Date expiryDate = new Date(now.getTime() + JWT_EXPIRATION);
         // Tạo chuỗi json web token từ id của user.
         return Jwts.builder()

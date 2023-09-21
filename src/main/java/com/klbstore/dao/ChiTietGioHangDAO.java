@@ -1,5 +1,6 @@
 package com.klbstore.dao;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 
@@ -53,8 +54,8 @@ public interface ChiTietGioHangDAO extends JpaRepository<ChiTietGioHang, Integer
         // ctgh.sanPham.sanPhamId, ctgh.sanPham.tenSanPham, " +
         // "CASE " +
         // " WHEN (ggTrucTiep IS NOT NULL " +
-        // " AND ggTrucTiep.ngayBatDau <= CURRENT_TIMESTAMP " +
-        // " AND ggTrucTiep.ngayKetThuc >= CURRENT_TIMESTAMP) " +
+        // " AND ggTrucTiep.ngayBatDau <= :thoiGianVietNam " +
+        // " AND ggTrucTiep.ngayKetThuc >= :thoiGianVietNam) " +
         // " THEN (CASE " +
         // " WHEN ctgh.sanPham.giaBan IS NOT NULL " +
         // " THEN (ctgh.sanPham.giaBan * (1 - COALESCE(ggTrucTiep.giamGiaTrucTiep, 0)))
@@ -64,8 +65,8 @@ public interface ChiTietGioHangDAO extends JpaRepository<ChiTietGioHang, Integer
         // " ELSE ctgh.sanPham.giaBan END, " +
         // "CASE " +
         // " WHEN (ggTrucTiep IS NOT NULL " +
-        // " AND ggTrucTiep.ngayBatDau <= CURRENT_TIMESTAMP " +
-        // " AND ggTrucTiep.ngayKetThuc >= CURRENT_TIMESTAMP) " +
+        // " AND ggTrucTiep.ngayBatDau <= :thoiGianVietNam " +
+        // " AND ggTrucTiep.ngayKetThuc >= :thoiGianVietNam) " +
         // " THEN (CASE " +
         // " WHEN ctgh.sanPham.giaBan IS NOT NULL THEN " +
         // " (ctgh.sanPham.giaBan * (1 -
@@ -83,8 +84,8 @@ public interface ChiTietGioHangDAO extends JpaRepository<ChiTietGioHang, Integer
         @Query("SELECT new com.klbstore.dto.ChiTietGioHangDTO(ctgh, ctgh.sanPham.sanPhamId, ctgh.sanPham.tenSanPham, " +
                         "(CASE " +
                         " WHEN (ggTrucTiep IS NOT NULL " +    
-                        " AND ggTrucTiep.ngayBatDau <= CURRENT_TIMESTAMP " +
-                        " AND ggTrucTiep.ngayKetThuc >= CURRENT_TIMESTAMP) " +
+                        " AND ggTrucTiep.ngayBatDau <= :thoiGianVietNam " +
+                        " AND ggTrucTiep.ngayKetThuc >= :thoiGianVietNam) " +
                         " THEN (CASE " +
                         " WHEN ctgh.sanPham.giaBan IS NOT NULL " +
                         " THEN (ctgh.sanPham.giaBan * (1 - COALESCE(ggTrucTiep.giamGiaTrucTiep, 0))) " +
@@ -92,30 +93,30 @@ public interface ChiTietGioHangDAO extends JpaRepository<ChiTietGioHang, Integer
                         " END) " +
                         " ELSE ctgh.sanPham.giaBan END), " +
                         "(CASE WHEN (ggTrucTiep IS NOT NULL " +
-                        " AND ggTrucTiep.ngayBatDau <= CURRENT_TIMESTAMP " +
-                        " AND ggTrucTiep.ngayKetThuc >= CURRENT_TIMESTAMP) THEN  " + 
+                        " AND ggTrucTiep.ngayBatDau <= :thoiGianVietNam " +
+                        " AND ggTrucTiep.ngayKetThuc >= :thoiGianVietNam) THEN  " +
                         " (ctgh.sanPham.giaBan * (1 - COALESCE(ggTrucTiep.giamGiaTrucTiep, 0))) " + 
                         " ELSE ctgh.sanPham.giaBan END * ctgh.soLuong)) " +
                         "FROM ChiTietGioHang ctgh " +
                         "JOIN ctgh.gioHang gh " +
                         "LEFT JOIN ctgh.sanPham.sanPhamGiamGiaTrucTieps ggTrucTiep " +
                         "WHERE gh.nguoiDung.nguoiDungId = :nguoiDungId")
-        List<ChiTietGioHangDTO> layDanhSachSanPhamTrongGioHangTheoNguoiDung(@Param("nguoiDungId") Integer nguoiDungId);
+        List<ChiTietGioHangDTO> layDanhSachSanPhamTrongGioHangTheoNguoiDung(@Param("nguoiDungId") Integer nguoiDungId, @Param("thoiGianVietNam") LocalDateTime thoiGianVietNam);
 
         @Query("SELECT " +
                         "SUM(CASE WHEN (ggTrucTiep IS NOT NULL " +
-                        "AND ggTrucTiep.ngayBatDau <= CURRENT_TIMESTAMP " +
-                        "AND ggTrucTiep.ngayKetThuc >= CURRENT_TIMESTAMP) THEN  "
+                        "AND ggTrucTiep.ngayBatDau <= :thoiGianVietNam " +
+                        "AND ggTrucTiep.ngayKetThuc >= :thoiGianVietNam) THEN  "
                         + "(ctgh.sanPham.giaBan * (1 - COALESCE(ggTrucTiep.giamGiaTrucTiep, 0))) "
                         + "ELSE ctgh.sanPham.giaBan END * ctgh.soLuong) " +
                         "FROM ChiTietGioHang ctgh " +
                         "JOIN ctgh.gioHang gh " +
                         "LEFT JOIN ctgh.sanPham.sanPhamGiamGiaTrucTieps ggTrucTiep " +
                         "WHERE gh.nguoiDung.nguoiDungId = :nguoiDungId")
-        Double tinhTongTienTrongGioHang(@Param("nguoiDungId") Integer nguoiDungId);
+        Double tinhTongTienTrongGioHang(@Param("nguoiDungId") Integer nguoiDungId, @Param("thoiGianVietNam")LocalDateTime thoiGianVietNam);
 
         @Query("SELECT " +
-                        "COUNT(ctgh) " +
+                        "SUM(ctgh.soLuong) " +
                         "FROM ChiTietGioHang ctgh " +
                         "JOIN ctgh.gioHang gh " +
                         "LEFT JOIN ctgh.sanPham.sanPhamGiamGiaTrucTieps ggTrucTiep " +

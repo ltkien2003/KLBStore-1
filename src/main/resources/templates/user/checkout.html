@@ -220,23 +220,21 @@
                                 </tr>
                                 </tbody>
                                 <tfoot>
-                                <tr class="order-total">
+                                <tr class="cart-subtotal">
                                     <th>Phí vận chuyển</th>
 
                                     <td th:text="${#strings.equals(#numbers.formatDecimal(cart.get('tongPhiVanChuyen').asDouble(), 0, 'COMMA', 0, 'POINT'), '0')} ? 'Chúng tôi vẫn chưa hỗ trợ giao hàng ở khu vực của bạn, vui lòng đến cửa hàng nhận nhé.' : ${#numbers.formatDecimal(cart.get('tongPhiVanChuyen').asDouble(), 0, 'COMMA', 0, 'POINT')} + ' ₫'">
                                     </td>
                                 </tr>
-                                <tr class="order-total">
+                                <tr class="cart-subtotal">
                                     <th>Ngày giao hàng dự kiến</th>
                                     <td th:text="${#strings.equals(#numbers.formatDecimal(cart.get('tongPhiVanChuyen').asDouble(), 0, 'COMMA', 0, 'POINT'), '0')} ? 'Chưa xác định' : ${cart.get('ngayGiaoHangDuKien').asText()}">
-                                        <strong th:text="${cart.get('ngayGiaoHangDuKien').asText()}"></strong>
+                                        <span th:text="${cart.get('ngayGiaoHangDuKien').asText()}"></span>
                                     </td>
                                 </tr>
-                                <tr class="order-total">
+                                <tr class="cart-subtotal">
                                     <th>Tổng tiền sản phẩm</th>
-                                    <td>
-                                        <strong><span class="amount" th:text="${#numbers.formatDecimal(cart.get('tongTien').asDouble(), 0, 'COMMA', 0, 'POINT')} + ' ₫'"></span></strong>
-                                    </td>
+                                    <td><span class="amount" th:text="${#numbers.formatDecimal(cart.get('tongTien').asDouble(), 0, 'COMMA', 0, 'POINT')} + ' ₫'"></span></td>
                                 </tr>
                                 <tr class="order-total">
                                     <th>Tổng cộng</th>

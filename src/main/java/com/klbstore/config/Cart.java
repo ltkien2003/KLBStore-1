@@ -3,6 +3,7 @@ package com.klbstore.config;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.klbstore.extensions.VNT;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -42,9 +43,9 @@ public class Cart implements HandlerInterceptor {
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             NguoiDung nguoiDung = nguoiDungDAO.findByTenDangNhap(authentication.getName());
             if (nguoiDung != null) {
-                if(chiTietGioHangDAO.tongSoSanPhamTrongGioHang(nguoiDung.getNguoiDungId()) != null && chiTietGioHangDAO.tinhTongTienTrongGioHang(nguoiDung.getNguoiDungId()) != null){
+                if(chiTietGioHangDAO.tongSoSanPhamTrongGioHang(nguoiDung.getNguoiDungId()) != null && chiTietGioHangDAO.tinhTongTienTrongGioHang(nguoiDung.getNguoiDungId(), VNT.getLocalDateTime()) != null){
                     tongSoSanPham = chiTietGioHangDAO.tongSoSanPhamTrongGioHang(nguoiDung.getNguoiDungId());
-                    tongTien = chiTietGioHangDAO.tinhTongTienTrongGioHang(nguoiDung.getNguoiDungId());
+                    tongTien = chiTietGioHangDAO.tinhTongTienTrongGioHang(nguoiDung.getNguoiDungId(), VNT.getLocalDateTime());
                 }
             } else {
                 if (shoppingCartService.getShoppingCartDTO() != null && shoppingCartService.getShoppingCartDTO().getTongSoLuong() != null && shoppingCartService.getShoppingCartDTO().getTongTien() != null){

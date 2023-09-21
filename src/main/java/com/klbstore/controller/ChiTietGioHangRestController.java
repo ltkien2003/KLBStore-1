@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import com.klbstore.extensions.VNT;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -185,9 +186,9 @@ public class ChiTietGioHangRestController {
         double tongTien = 0;
         if (nguoiDung != null) {
             if (chiTietGioHangDAO.tongSoSanPhamTrongGioHang(nguoiDung.getNguoiDungId()) != null
-                    && chiTietGioHangDAO.tinhTongTienTrongGioHang(nguoiDung.getNguoiDungId()) != null) {
+                    && chiTietGioHangDAO.tinhTongTienTrongGioHang(nguoiDung.getNguoiDungId(), VNT.getLocalDateTime()) != null) {
                 tongSoSanPham = chiTietGioHangDAO.tongSoSanPhamTrongGioHang(nguoiDung.getNguoiDungId());
-                tongTien = chiTietGioHangDAO.tinhTongTienTrongGioHang(nguoiDung.getNguoiDungId());
+                tongTien = chiTietGioHangDAO.tinhTongTienTrongGioHang(nguoiDung.getNguoiDungId(), VNT.getLocalDateTime());
             }
         } else {
             if (shoppingCartService.getShoppingCartDTO() != null
@@ -228,9 +229,9 @@ public class ChiTietGioHangRestController {
                     .format(restTemplate.getDateDelivery(districtId, wardId).getData().getLeadtime());
             chiTietGioHangDAO.kiemTraVaXoaSanPhamKhongHopLeTrongGioHang(nguoiDung.getNguoiDungId());
             AllChiTietGioHangDTO allChiTietGioHangDTO = new AllChiTietGioHangDTO(
-                    chiTietGioHangDAO.layDanhSachSanPhamTrongGioHangTheoNguoiDung(nguoiDung.getNguoiDungId()),
+                    chiTietGioHangDAO.layDanhSachSanPhamTrongGioHangTheoNguoiDung(nguoiDung.getNguoiDungId(), VNT.getLocalDateTime()),
                     chiTietGioHangDAO.tongSoSanPhamTrongGioHang(nguoiDung.getNguoiDungId()),
-                    chiTietGioHangDAO.tinhTongTienTrongGioHang(nguoiDung.getNguoiDungId()), tongPhiVanChuyen,
+                    chiTietGioHangDAO.tinhTongTienTrongGioHang(nguoiDung.getNguoiDungId(), VNT.getLocalDateTime()), tongPhiVanChuyen,
                     ngayGiaoHangDuKien);
             return new ResponseEntity<>(allChiTietGioHangDTO, HttpStatus.OK);
         } else {
@@ -244,9 +245,9 @@ public class ChiTietGioHangRestController {
         if (nguoiDung != null) {
             chiTietGioHangDAO.kiemTraVaXoaSanPhamKhongHopLeTrongGioHang(nguoiDung.getNguoiDungId());
             AllChiTietGioHangDTO allChiTietGioHangDTO = new AllChiTietGioHangDTO(
-                    chiTietGioHangDAO.layDanhSachSanPhamTrongGioHangTheoNguoiDung(nguoiDung.getNguoiDungId()),
+                    chiTietGioHangDAO.layDanhSachSanPhamTrongGioHangTheoNguoiDung(nguoiDung.getNguoiDungId(), VNT.getLocalDateTime()),
                     chiTietGioHangDAO.tongSoSanPhamTrongGioHang(nguoiDung.getNguoiDungId()),
-                    chiTietGioHangDAO.tinhTongTienTrongGioHang(nguoiDung.getNguoiDungId()), null,
+                    chiTietGioHangDAO.tinhTongTienTrongGioHang(nguoiDung.getNguoiDungId(), VNT.getLocalDateTime()), null,
                     null);
             Map<String, Object> response = new HashMap<>();
             if (allChiTietGioHangDTO.getDanhSachSanPhamTrongGioHang() != null) {
@@ -306,9 +307,9 @@ public class ChiTietGioHangRestController {
         }
         chiTietGioHangDAO.kiemTraVaXoaSanPhamKhongHopLeTrongGioHang(nguoiDungId);
         AllChiTietGioHangDTO allChiTietGioHangDTO = new AllChiTietGioHangDTO(
-                chiTietGioHangDAO.layDanhSachSanPhamTrongGioHangTheoNguoiDung(nguoiDungId),
+                chiTietGioHangDAO.layDanhSachSanPhamTrongGioHangTheoNguoiDung(nguoiDungId, VNT.getLocalDateTime()),
                 chiTietGioHangDAO.tongSoSanPhamTrongGioHang(nguoiDungId),
-                chiTietGioHangDAO.tinhTongTienTrongGioHang(nguoiDungId), tongPhiVanChuyen,
+                chiTietGioHangDAO.tinhTongTienTrongGioHang(nguoiDungId, VNT.getLocalDateTime()), tongPhiVanChuyen,
                 ngayGiaoHangDuKien);
         return new ResponseEntity<>(allChiTietGioHangDTO, HttpStatus.OK);
     }

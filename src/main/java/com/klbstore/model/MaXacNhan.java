@@ -7,6 +7,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 
+import com.klbstore.extensions.VNT;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -25,7 +26,7 @@ public class MaXacNhan implements Serializable {
     private Boolean daXacNhan = false;
 
     @Column
-    private Date ngayTaoOtp = new Date();
+    private Date ngayTaoOtp = VNT.getThoiGianVietNam();
 
     @Column
     private Date hanHieuLucOtp = new Date(ngayTaoOtp.getTime() + 300000); // 5 phút

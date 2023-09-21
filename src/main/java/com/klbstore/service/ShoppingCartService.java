@@ -6,7 +6,6 @@ import java.util.List;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -122,6 +121,7 @@ public class ShoppingCartService {
             List<ChiTietGioHangDTO> cartItems = cart.getDanhSachSanPhamTrongGioHang();
             int totalQuantity = 0;
             double totalAmount = 0.0;
+            List<ChiTietGioHangDTO> keptItems = new ArrayList<>(); // Danh sách các mục giữ lại trong giỏ hàng
             if (cartItems != null) {
                 for (ChiTietGioHangDTO cartItem : cartItems) {
                     cartItem.setTongGia(cartItem.getChiTietGioHang().getSoLuong() * cartItem.getGiaBan());
@@ -135,18 +135,22 @@ public class ShoppingCartService {
                                     .asText());
                     if (cartItem.getChiTietGioHang().getSoLuong() == 0
                             || cartItem.getChiTietGioHang().getSoLuong() > maxQuantityInStock) {
-                        cartItems.remove(cartItem);
+                        // Không thêm vào danh sách keptItems
+                    } else {
+                        keptItems.add(cartItem); // Thêm vào danh sách keptItems
+                        totalQuantity += cartItem.getChiTietGioHang().getSoLuong(); // Cộng thêm số lượng vào tổng số lượng
                     }
 
                 }
-                totalQuantity = cartItems.size();
             }
+            cart.setDanhSachSanPhamTrongGioHang(keptItems); // Gán lại danh sách mục giữ lại vào giỏ hàng
             cart.setTongSoLuong(totalQuantity);
             cart.setTongTien(totalAmount);
         }
 
         return cart;
     }
+
 
     public String updateToCart(Integer mauSacId, Integer soLuong) {
         String message = "";
