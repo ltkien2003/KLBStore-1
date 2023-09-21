@@ -17,7 +17,7 @@ import javax.servlet.http.HttpServletRequest;
 public class VnpayConfig {
 
     public static String vnp_PayUrl = "https://sandbox.vnpayment.vn/paymentv2/vpcpay.html";
-    public static String vnp_Returnurl = "https://klbstore-dkyr.onrender.com/user/payment";
+    public static String vnp_Returnurl = "https://klbstore.osc-fr1.scalingo.io//user/payment";
     public static String vnp_TmnCode = "ZRW18TX8";
     public static String vnp_HashSecret = "SNLNODLJHCHDAKWQUZEPFCIECKIRPTIE";
     public static String vnp_apiUrl = "https://sandbox.vnpayment.vn/merchant_webapi/api/transaction";

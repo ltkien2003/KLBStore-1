@@ -147,9 +147,9 @@ public class UserController {
     @GetMapping(value = {"/", "/user/index"})
     public String index(Model model) {
         model.addAttribute("noiBat",
-                restTemplate.get("https://klbstore-dkyr.onrender.com/rest/xinchao?hienThi=true&noiBat=true&sortBy=giamGiaGiamDan"));
+                restTemplate.get("https://klbstore.osc-fr1.scalingo.io//rest/xinchao?hienThi=true&noiBat=true&sortBy=giamGiaGiamDan"));
         model.addAttribute("dienThoai",
-                restTemplate.get("https://klbstore-dkyr.onrender.com/rest/xinchao?hienThi=true&sortBy=giaGiamDan"));
+                restTemplate.get("https://klbstore.osc-fr1.scalingo.io//rest/xinchao?hienThi=true&sortBy=giaGiamDan"));
         model.addAttribute("useHeader", getNguoiDung());
         return "user/index";
     }
@@ -828,7 +828,7 @@ public class UserController {
             if (nguoiDung.getDiaChi() != null) {
                 List<HinhThucThanhToan> paymentMethods = htttDAO.findAll();
                 model.addAttribute("nguoiDung", nguoiDung);
-                model.addAttribute("cart", restTemplate.get("https://klbstore-dkyr.onrender.com/checkoutCart?address="
+                model.addAttribute("cart", restTemplate.get("https://klbstore.osc-fr1.scalingo.io//checkoutCart?address="
                         + nguoiDung.getDiaChi() + "&userId=" + nguoiDung.getNguoiDungId()));
                 model.addAttribute("paymentMethods", paymentMethods);
             } else {
@@ -905,7 +905,7 @@ public class UserController {
             SignatureException, NoSuchAlgorithmException {
         NguoiDung nguoiDung = getNguoiDung();
         JsonNode map = restTemplate
-                .get("https://klbstore-dkyr.onrender.com/checkoutSpecifiedCart?address=" + nguoiDung.getDiaChi()
+                .get("https://klbstore.osc-fr1.scalingo.io//checkoutSpecifiedCart?address=" + nguoiDung.getDiaChi()
                         + "&userId=" + nguoiDung.getNguoiDungId());
         {
             String tongPhiVanChuyen = map.get("tongPhiVanChuyen").asText();
@@ -1093,17 +1093,17 @@ public class UserController {
         if (productId == null || productName == null) {
             return "redirect:/user/404";
         }
-        model.addAttribute("chiTiet", restTemplate.get("https://klbstore-dkyr.onrender.com/rest/xinchao?hienThi=true&sanPhamId="
+        model.addAttribute("chiTiet", restTemplate.get("https://klbstore.osc-fr1.scalingo.io//rest/xinchao?hienThi=true&sanPhamId="
                 + productId + "&tenSanPham=" + productName));
         model.addAttribute("sanPhamLienQuan",
-                restTemplate.get("https://klbstore-dkyr.onrender.com/rest/hello?hienThi=true&related=" + productId));
+                restTemplate.get("https://klbstore.osc-fr1.scalingo.io//rest/hello?hienThi=true&related=" + productId));
         model.addAttribute("danhGias",
-                restTemplate.get("https://klbstore-dkyr.onrender.com/rest/danhGia?sanPhamId=" + productId));
+                restTemplate.get("https://klbstore.osc-fr1.scalingo.io//rest/danhGia?sanPhamId=" + productId));
         NguoiDung nguoiDung = nguoiDungDAO
                 .findByTenDangNhap(SecurityContextHolder.getContext().getAuthentication().getName());
         if (nguoiDung != null) {
             model.addAttribute("canUserRateProduct",
-                    restTemplate.get("https://klbstore-dkyr.onrender.com/rest/canUserRateProduct?sanPhamId=" + productId
+                    restTemplate.get("https://klbstore.osc-fr1.scalingo.io//rest/canUserRateProduct?sanPhamId=" + productId
                             + "&nguoiDungId=" + nguoiDung.getNguoiDungId()));
         }
 
@@ -1116,7 +1116,7 @@ public class UserController {
                                 @RequestParam(value = "page", defaultValue = "1") int page,
                                 @RequestParam(value = "nhomSanPhamId", defaultValue = "") int nhomSanPhamId,
                                 @RequestParam(value = "sortBy", defaultValue = "") String sortBy) {
-        model.addAttribute("pg", restTemplate.get("https://klbstore-dkyr.onrender.com/rest/sanpham?hienThi=true" + "&page=" + page
+        model.addAttribute("pg", restTemplate.get("https://klbstore.osc-fr1.scalingo.io//rest/sanpham?hienThi=true" + "&page=" + page
                 + "&nhomSanPhamId=" + nhomSanPhamId + "&sortBy=" + sortBy));
         model.addAttribute("sortBy", sortBy);
         return "user/shop-list";
@@ -1127,7 +1127,7 @@ public class UserController {
                          @RequestParam(value = "keywords", defaultValue = "") String keywords,
                          @RequestParam(value = "page", defaultValue = "1") int page,
                          @RequestParam(value = "sortBy", defaultValue = "") String sortBy) {
-        model.addAttribute("pg", restTemplate.get("https://klbstore-dkyr.onrender.com/rest/sanpham?hienThi=true" + "&page=" + page
+        model.addAttribute("pg", restTemplate.get("https://klbstore.osc-fr1.scalingo.io//rest/sanpham?hienThi=true" + "&page=" + page
                 + "&tenSanPham=" + keywords + "&sortBy=" + sortBy));
         model.addAttribute("sortBy", sortBy);
         return "user/shop-list";

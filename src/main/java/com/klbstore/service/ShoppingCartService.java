@@ -59,7 +59,7 @@ public class ShoppingCartService {
     public String addToCart(Integer mauSacId, Integer soLuong) {
         String message = "";
         AllChiTietGioHangDTO cart = getCart();
-        JsonNode sanPhamDTO = restTemplate.get("https://klbstore-dkyr.onrender.com/rest/xinchao?hienThi=true&mauSacId=" + mauSacId)
+        JsonNode sanPhamDTO = restTemplate.get("https://klbstore.osc-fr1.scalingo.io//rest/xinchao?hienThi=true&mauSacId=" + mauSacId)
                 .get(0);
 
         if (sanPhamDTO != null) {
@@ -127,7 +127,7 @@ public class ShoppingCartService {
                     cartItem.setTongGia(cartItem.getChiTietGioHang().getSoLuong() * cartItem.getGiaBan());
                     totalAmount += cartItem.getTongGia();
                     JsonNode sanPhamDTO = restTemplate
-                            .get("https://klbstore-dkyr.onrender.com/rest/xinchao?hienThi=true&mauSacId="
+                            .get("https://klbstore.osc-fr1.scalingo.io//rest/xinchao?hienThi=true&mauSacId="
                                     + cartItem.getChiTietGioHang().getMauSac().getMauSacId())
                             .get(0);
                     int maxQuantityInStock = Integer.parseInt(
@@ -157,7 +157,7 @@ public class ShoppingCartService {
         AllChiTietGioHangDTO cart = getCart();
 
         List<ChiTietGioHangDTO> cartItems = cart.getDanhSachSanPhamTrongGioHang();
-        JsonNode sanPhamDTO = restTemplate.get("https://klbstore-dkyr.onrender.com/rest/xinchao?hienThi=true&mauSacId=" + mauSacId)
+        JsonNode sanPhamDTO = restTemplate.get("https://klbstore.osc-fr1.scalingo.io//rest/xinchao?hienThi=true&mauSacId=" + mauSacId)
                 .get(0);
         if (cartItems != null) {
             for (ChiTietGioHangDTO item : cartItems) {
